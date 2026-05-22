@@ -2,15 +2,15 @@
 
 ## Development
 
-This repository currently only contains this README, so `npm run dev` will fail with:
+`npm run dev` does not work in this repository right now because there is no `package.json`.
 
-- `ENOENT: no such file or directory, open '.../package.json'`
+### Quick fix
 
-That means there is no frontend app configured here yet (with npm or yarn scripts).
+1. Create or add the actual game project files first (`package.json`, source code, etc.).
+2. Install dependencies with the package manager used by that project:
+   - `npm install` if it has `package-lock.json`
+   - `yarn install` if it has `yarn.lock`
+3. Start the dev server (`npm run dev` or `yarn dev`).
+4. Open the **Local** URL in your browser (usually `http://localhost:5173`).
 
-### About "Network" in dev servers
-
-If you are using a Vite/React project in another folder, use the **Local** URL (usually `http://localhost:5173`) in your browser first.  
-The **Network** URL is for other devices on your LAN and may not load on your machine depending on setup/firewall.
-
-You do **not** need yarn specifically; use whichever package manager the project is configured for (`npm` if it has `package-lock.json`, `yarn` if it has `yarn.lock`).
+Use the **Network** URL only for other devices on the same LAN.
