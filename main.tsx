@@ -9,10 +9,10 @@ const ctx = canvas.getContext("2d")!;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Start the player in the center of the screen
-localPlayer.pos = { x: canvas.width / 2, y: canvas.height / 2 };
-
 const world = { width: canvas.width, height: canvas.height };
+
+// Start the player in the center of the screen
+localPlayer.pos = { x: world.width / 2, y: world.height / 2 };
 
 const airFriction = 0.98;
 
