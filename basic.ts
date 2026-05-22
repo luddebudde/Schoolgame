@@ -1,0 +1,1 @@
+export const origo = () => {return {x: 0, y: 0}}

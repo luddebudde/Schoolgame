@@ -1,0 +1,38 @@
+{
+  "name": "schoolgame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"node server.js\" \"vite\"",
+    "server": "node server.js",
+    "client": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luddebudde/Schoolgame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/luddebudde/Schoolgame/issues"
+  },
+  "homepage": "https://github.com/luddebudde/Schoolgame#readme",
+  "devDependencies": {
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
+  }
+}
