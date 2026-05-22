@@ -19,7 +19,7 @@ const airFriction = 0.98;
 // --- Multiplayer ---
 // Connect to the game server on port 3001, using whatever hostname the browser used.
 // This works on localhost AND on other devices by IP or hostname automatically.
-const serverUrl = `${window.location.protocol}//${window.location.hostname}:3001`;
+const serverUrl = "https://" + window.location.hostname;
 const socket = io(serverUrl);
 
 socket.on("connect", () => {
