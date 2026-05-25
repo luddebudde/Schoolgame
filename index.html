@@ -15,11 +15,100 @@
     canvas {
       display: block;
     }
+
+    #lobby {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    #lobby-container {
+      text-align: center;
+      min-width: 340px;
+    }
+
+    #lobby-container h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #player-list {
+      margin-bottom: 1.5rem;
+      min-height: 60px;
+    }
+
+    .player-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      margin: 6px 0;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      border-left: 4px solid #555;
+    }
+
+    .player-entry.ready {
+      border-left-color: #4caf50;
+      background: rgba(76, 175, 80, 0.15);
+    }
+
+    .player-status {
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .player-entry.ready .player-status {
+      color: #4caf50;
+    }
+
+    #lobby-status {
+      margin-bottom: 1.5rem;
+      color: #aaa;
+      font-size: 0.95rem;
+      min-height: 1.2em;
+    }
+
+    #ready-btn {
+      padding: 12px 48px;
+      font-size: 1.2rem;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #ready-btn:hover:not(:disabled) {
+      background: #43a047;
+    }
+
+    #ready-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
 <body>
   <canvas id="game"></canvas>
+
+  <div id="lobby">
+    <div id="lobby-container">
+      <h1>Game Lobby</h1>
+      <div id="player-list"></div>
+      <div id="lobby-status">Connecting...</div>
+      <button id="ready-btn">Ready!</button>
+    </div>
+  </div>
 
   <script type="module" src="./main.tsx"></script>
 </body>

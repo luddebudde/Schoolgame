@@ -12,6 +12,7 @@ export type Player = {
     speed: number
     pos: Vec2
     acc: Vec2
+    ready?: boolean
 }
 
 export const localPlayer: Player = {

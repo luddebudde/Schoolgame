@@ -17,11 +17,55 @@ localPlayer.pos = { x: world.width / 2, y: world.height / 2 };
 const airFriction = 0.98;
 
 // --- Multiplayer ---
-// Connect to the game server on port 3001, using whatever hostname the browser used.
-// This works on localhost AND on other devices by IP or hostname automatically.
-const serverUrl = `${window.location.protocol}//${window.location.hostname}:3001`;
-const socket = io(serverUrl);
+// io() with no args connects to the current page origin.
+// Vite proxies /socket.io → localhost:3001, so only one port is ever needed
+// (whether running locally, in a devcontainer, or accessed from another device).
+const socket = io();
 
+// --- Lobby UI ---
+const lobbyOverlay = document.getElementById("lobby") as HTMLDivElement;
+const playerListEl = document.getElementById("player-list") as HTMLDivElement;
+const lobbyStatusEl = document.getElementById("lobby-status") as HTMLDivElement;
+const readyBtn = document.getElementById("ready-btn") as HTMLButtonElement;
+
+function updateLobbyUI(players: Record<string, any>) {
+  const list = Object.values(players);
+  playerListEl.innerHTML = list
+    .map(
+      (p) =>
+        `<div class="player-entry${p.ready ? " ready" : ""}">
+          <span class="player-name">${p.name}</span>
+          <span class="player-status">${p.ready ? "✓ Ready" : "Not ready"}</span>
+        </div>`
+    )
+    .join("");
+
+  const readyCount = list.filter((p) => p.ready).length;
+  const total = list.length;
+  if (total === 0) {
+    lobbyStatusEl.textContent = "Waiting for players to connect...";
+  } else if (readyCount === total) {
+    lobbyStatusEl.textContent = "All players ready! Starting...";
+  } else {
+    lobbyStatusEl.textContent = `${readyCount} / ${total} players ready`;
+  }
+}
+
+let gameRunning = false;
+function startGame() {
+  if (gameRunning) return;
+  gameRunning = true;
+  lobbyOverlay.style.display = "none";
+  gameLoop();
+}
+
+readyBtn.addEventListener("click", () => {
+  readyBtn.disabled = true;
+  readyBtn.textContent = "Waiting for others...";
+  socket.emit("playerReady");
+});
+
+// --- Socket Events ---
 socket.on("connect", () => {
   localPlayer.id = socket.id!;
   socket.emit("playerJoin", {
@@ -34,10 +78,25 @@ socket.on("connect", () => {
   });
 });
 
-socket.on("init", (players: Record<string, any>) => {
-  for (const [id, data] of Object.entries(players)) {
-    remotePlayers.set(id, { ...data, id });
+socket.on("init", (data: { players: Record<string, any>; gameStarted: boolean }) => {
+  for (const [id, p] of Object.entries(data.players)) {
+    if (id !== socket.id) remotePlayers.set(id, { ...p, id });
   }
+  if (data.gameStarted) {
+    startGame();
+  }
+});
+
+socket.on("lobbyUpdate", (players: Record<string, any>) => {
+  remotePlayers.clear();
+  for (const [id, p] of Object.entries(players)) {
+    if (id !== socket.id) remotePlayers.set(id, { ...p, id });
+  }
+  updateLobbyUI(players);
+});
+
+socket.on("gameStart", () => {
+  startGame();
 });
 
 socket.on("playerJoined", (data: any) => {
@@ -70,7 +129,7 @@ const gameLoop = () => {
   localPlayer.acc = multVar(localPlayer.acc, airFriction);
 
   // Draw local player (with wall bounce)
-  circles.forEach(circle => {
+  circles.forEach((circle) => {
     handleWallBounce(circle, world);
 
     ctx.beginPath();
@@ -85,7 +144,7 @@ const gameLoop = () => {
   });
 
   // Draw remote players
-  remotePlayers.forEach(p => {
+  remotePlayers.forEach((p) => {
     ctx.beginPath();
     ctx.arc(p.pos.x, p.pos.y, p.radius, 0, 2 * Math.PI);
     ctx.fillStyle = "red";
@@ -105,6 +164,7 @@ const gameLoop = () => {
   requestAnimationFrame(gameLoop);
 };
 
+// --- Input ---
 const keys: { [key: string]: boolean } = {};
 
 window.addEventListener("keydown", (e) => {
@@ -115,4 +175,4 @@ window.addEventListener("keyup", (e) => {
   keys[e.key.toLowerCase()] = false;
 });
 
-gameLoop();
+// Game loop is started by startGame() once the server emits "gameStart"
